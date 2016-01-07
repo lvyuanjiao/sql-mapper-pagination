@@ -1,17 +1,19 @@
 'use strict';
 
-module.exports = function(config) {
+module.exports = function(defaultRows) {
+  defaultRows = defaultRows || 12;
   return {
     afterParse: function(sql, values, plugin, callback) {
-      var params = plugin.params;
       var dialect = plugin.ctx.dialect;
-      if (params.length === 0 || !params[0]) {
-        return callback(sql, values);
+      var limit = {
+        'rows': defaultRows
+      };
+      if (plugin.params && plugin.params[0]) {
+        limit = plugin.params[0];
       }
-      var limit = params[0];
-      if (!limit.offset) {
-        limit.offset = 0;
-      }
+      limit.offset = limit.offset || 0;
+      limit.rows = limit.rows || defaultRows;
+
       var condition = '';
       if (dialect === 'mysql' || dialect === 'postgres' || dialect === 'sqlite') {
         condition = '';

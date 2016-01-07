@@ -2,7 +2,7 @@
 
 module.exports = function(config) {
   return {
-    afterParse: function(sql, values, plugin, callback){
+    afterParse: function(sql, values, plugin, callback) {
       var params = plugin.params;
       var dialect = plugin.ctx.dialect;
       if (params.length === 0 || !params[0]) {
@@ -14,6 +14,7 @@ module.exports = function(config) {
       }
       var condition = '';
       if (dialect === 'mysql' || dialect === 'postgres' || dialect === 'sqlite') {
+        condition = '';
         callback((sql + (limit.rows ? (' LIMIT ' + limit.rows) : '') + ' OFFSET ' + limit.offset), values);
       } else if (dialect === 'oracle') {
         condition = '';
@@ -33,4 +34,4 @@ module.exports = function(config) {
       }
     }
   };
-});
+};

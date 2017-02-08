@@ -1,19 +1,18 @@
-
 var assert = require('assert');
 var getPagination = require('../index');
 
 (function () {
-
   var sql = 'SELECT * FROM tb';
   var values = [];
-  var limit = {
+  var page = {
     'offset': 0,
     'rows': 12
-  };
+  };  
+
   var testData = [{
     title: '  MySQL',
     dialect: 'mysql',
-    params: limit,
+    params: page,
     sql_input: sql,
     values_input: values,
     sql_output: 'SELECT * FROM tb LIMIT 12 OFFSET 0',
@@ -21,7 +20,7 @@ var getPagination = require('../index');
   },{
     title: '  PostgresSQL',
     dialect: 'postgres',
-    params: limit,
+    params: page,
     sql_input: sql,
     values_input: values,
     sql_output: 'SELECT * FROM tb LIMIT 12 OFFSET 0',
@@ -29,7 +28,7 @@ var getPagination = require('../index');
   },{
     title: '  SQlite',
     dialect: 'sqlite',
-    params: limit,
+    params: page,
     sql_input: sql,
     values_input: values,
     sql_output: 'SELECT * FROM tb LIMIT 12 OFFSET 0',
@@ -37,7 +36,7 @@ var getPagination = require('../index');
   },{
     title: '  Oracle',
     dialect: 'oracle',
-    params: limit,
+    params: page,
     sql_input: sql,
     values_input: values,
     sql_output: 'SELECT * FROM ( SELECT tmp_table.*, rownum, row_id FROM ( SELECT * FROM tb ) tmp_table WHERE rownum <= 12 ) WHERE row_id > 0',
@@ -45,7 +44,7 @@ var getPagination = require('../index');
   },{
     title: '  MS SQL',
     dialect: 'mssql',
-    params: limit,
+    params: page,
     sql_input: sql,
     values_input: values,
     sql_output: 'SELECT * FROM tb OFFSET 0 ROWS FETCH NEXT 12 ROWS ONLY',
@@ -55,9 +54,7 @@ var getPagination = require('../index');
   function getPlugin (dialect, params) {
     params = [].concat(params || []);
     return {
-      'ctx': {
-        'dialect': dialect
-      },
+      'ctx': { 'dialect': dialect },
       'params': params
     };
   }
@@ -73,7 +70,6 @@ var getPagination = require('../index');
     });
   });
 
-
   console.log('#Test with default rows');
   paginate = getPagination();
   testData.forEach(function (item) {
@@ -85,4 +81,18 @@ var getPagination = require('../index');
     });
   });
 
+  console.log('#Test with options');
+  paginate = getPagination({
+    offsetKey: 'index',
+    rowsKey: 'num'
+  });
+  var plugin = getPlugin('mysql', {
+    'index': 0,
+    'num': 20
+  });
+  console.log('  Custom page key');
+  paginate.afterParse(sql, [], plugin, function (sql, values) {
+    assert.equal(sql, 'SELECT * FROM tb LIMIT 20 OFFSET 0', 'sql not the same');
+    assert.deepEqual(values, [], 'values not the same');
+  });
 })();

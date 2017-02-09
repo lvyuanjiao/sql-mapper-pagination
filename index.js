@@ -6,7 +6,7 @@ module.exports = function(opts) {
   var offsetKey = opts.offsetKey || 'offset';
   var rowsKey = opts.rowsKey || 'rows';
   return {
-    afterParse: function(sql, values, plugin, callback) {
+    before: function(sql, values, plugin, callback) {
       var dialect = plugin.ctx.dialect;
       var page = plugin.params && plugin.params[0] || {};
       var limit = {

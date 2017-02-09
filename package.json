@@ -1,7 +1,7 @@
 {
   "name": "sql-mapper-pagination",
   "description": "Pagination plugin for sql-mapper",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": "lvyuanjiao <lvyuanjiao@yeah.net>",
   "contributors": [{
     "name": "Lv yuanjiao",

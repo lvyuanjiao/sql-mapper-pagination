@@ -64,7 +64,7 @@ var getPagination = require('../index');
   testData.forEach(function (item) {
     console.log(item.title);
     var plugin = getPlugin(item.dialect, item.params);
-    paginate.afterParse(item.sql_input, item.values_input, plugin, function (sql, values) {
+    paginate.before(item.sql_input, item.values_input, plugin, function (sql, values) {
       assert.equal(sql, item.sql_output, 'sql not the same');
       assert.deepEqual(values, item.values_output, 'values not the same');
     });
@@ -75,7 +75,7 @@ var getPagination = require('../index');
   testData.forEach(function (item) {
     console.log(item.title);
     var plugin = getPlugin(item.dialect); // no params
-    paginate.afterParse(item.sql_input, item.values_input, plugin, function (sql, values) {
+    paginate.before(item.sql_input, item.values_input, plugin, function (sql, values) {
       assert.equal(sql, item.sql_output, 'sql not the same');
       assert.deepEqual(values, item.values_output, 'values not the same');
     });
@@ -91,7 +91,7 @@ var getPagination = require('../index');
     'num': 20
   });
   console.log('  Custom page key');
-  paginate.afterParse(sql, [], plugin, function (sql, values) {
+  paginate.before(sql, [], plugin, function (sql, values) {
     assert.equal(sql, 'SELECT * FROM tb LIMIT 20 OFFSET 0', 'sql not the same');
     assert.deepEqual(values, [], 'values not the same');
   });
